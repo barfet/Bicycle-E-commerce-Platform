@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 # Base schema for common fields
@@ -19,5 +19,4 @@ class ProductTypeUpdate(ProductTypeBase):
 class ProductType(ProductTypeBase):
     id: int
 
-    class Config:
-        from_attributes = True # Allow creating schema from ORM model 
+    model_config = ConfigDict(from_attributes=True) # Use ConfigDict 

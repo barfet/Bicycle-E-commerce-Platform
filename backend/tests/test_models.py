@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from decimal import Decimal
 
-from app.models import ProductType, PartCategory, PartOption
+from app.models import ProductType, PartCategory, PartOption, AdminUser
+from app.core.security import hash_password, check_password
 
 def test_create_product_type(db_session: Session):
     """Test creating a ProductType instance."""
@@ -98,4 +99,34 @@ def test_cascade_delete_product_type(db_session: Session):
     # Check cascade
     assert db_session.get(ProductType, pt_id) is None
     assert db_session.get(PartCategory, pc_id) is None
-    assert db_session.get(PartOption, po_id) is None 
+    assert db_session.get(PartOption, po_id) is None
+
+def test_create_admin_user(db_session: Session):
+    """Test creating an AdminUser with a hashed password."""
+    username = "testadmin"
+    password = "supersecret"
+    hashed = hash_password(password)
+
+    admin = AdminUser(username=username, password_hash=hashed)
+    db_session.add(admin)
+    db_session.commit()
+    db_session.refresh(admin)
+
+    assert admin.id is not None
+    assert admin.username == username
+    assert admin.password_hash == hashed
+    assert admin.created_at is not None
+    # Verify password check works
+    assert check_password(password, admin.password_hash) is True
+    assert check_password("wrongpass", admin.password_hash) is False
+
+def test_admin_user_username_unique(db_session: Session):
+    """Test uniqueness constraint on AdminUser username."""
+    admin1 = AdminUser(username="uniqueadmin", password_hash=hash_password("pass1"))
+    db_session.add(admin1)
+    db_session.commit()
+
+    admin2 = AdminUser(username="uniqueadmin", password_hash=hash_password("pass2"))
+    db_session.add(admin2)
+    with pytest.raises(IntegrityError):
+        db_session.commit() 

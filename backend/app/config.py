@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ALGORITHM: str = "HS256" # Add JWT algorithm
 
     @computed_field
     @property

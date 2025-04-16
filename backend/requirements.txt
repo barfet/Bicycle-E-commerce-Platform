@@ -9,4 +9,5 @@ python-dotenv
 pytest
 httpx # Required by pytest-asyncio and for testing FastAPI async client
 bcrypt
-pyjwt 
+pyjwt
+python-jose[cryptography] # Add this for JWT handling 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 # Base schema
@@ -21,5 +21,4 @@ class PartCategoryUpdate(PartCategoryBase):
 class PartCategory(PartCategoryBase):
     id: int
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 
