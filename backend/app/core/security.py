@@ -1,7 +1,8 @@
 import bcrypt
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from jose import jwt
+from jose import jwt, JWTError
+from fastapi import HTTPException, status
 from app.config import settings
 
 def hash_password(plain_password: str) -> str:
@@ -28,5 +29,18 @@ def create_access_token(subject: str | Any, expires_delta: timedelta | None = No
     return encoded_jwt
 
 # Function to decode/verify token will be needed in middleware (STORY-203)
-# def verify_token(token: str):
-#     pass 
+def verify_token(token: str, credentials_exception: HTTPException) -> str:
+    """Verifies a JWT token and returns the subject (e.g., username)."""
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        username: str | None = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        # Optionally, add more validation here (e.g., check token scope/type)
+        return username
+    except JWTError:
+        raise credentials_exception 
