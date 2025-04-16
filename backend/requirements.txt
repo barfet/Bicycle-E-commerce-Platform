@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+alembic
+pydantic
+pydantic-settings # For loading config from env vars
+python-dotenv
+pytest
+httpx # Required by pytest-asyncio and for testing FastAPI async client
+bcrypt
+pyjwt 
