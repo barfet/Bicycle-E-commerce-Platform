@@ -9,20 +9,6 @@ from app import schemas
 
 API_V1_STR = "/api/v1"
 
-@pytest.fixture(scope="function")
-def test_admin_user(db_session: Session) -> AdminUser:
-    """Fixture to create a test admin user in the database for each test."""
-    username = "testloginadmin"
-    password = "testpassword"
-    hashed = hash_password(password)
-    user = AdminUser(username=username, password_hash=hashed)
-    db_session.add(user)
-    db_session.commit()
-    db_session.refresh(user)
-    # Add the raw password for test usage
-    user.raw_password = password 
-    return user
-
 def test_admin_login_success(client: TestClient, test_admin_user: AdminUser):
     """Test successful admin login."""
     login_data = {

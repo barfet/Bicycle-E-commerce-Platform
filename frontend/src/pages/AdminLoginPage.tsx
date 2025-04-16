@@ -1,11 +1,10 @@
 import React from 'react';
+import AdminLoginForm from '../components/AdminLoginForm'; // Import the form
 
 const AdminLoginPage: React.FC = () => {
-  // Login form implementation will go here in STORY-204
   return (
-    <div>
-      <h1>Admin Login</h1>
-      <p>Login form placeholder.</p>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <AdminLoginForm />
     </div>
   );
 };

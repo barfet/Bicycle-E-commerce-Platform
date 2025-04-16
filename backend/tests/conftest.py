@@ -2,12 +2,14 @@ import pytest
 from typing import Generator
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 # from sqlalchemy_utils import database_exists, create_database, drop_database
 from app.main import app
 from app.db.session import get_db
 from app.config import settings
 from app.db.base import Base
+from app.models import AdminUser
+from app.core.security import hash_password
 
 # Use a dedicated test database URL from environment variables
 TEST_DATABASE_URL = settings.TEST_DATABASE_URL
@@ -99,3 +101,19 @@ def client(db_session) -> Generator:
     with TestClient(app) as c:
         yield c
     del app.dependency_overrides[get_db] # Clean up override 
+
+@pytest.fixture(scope="function")
+def test_admin_user(db_session: Session) -> AdminUser:
+    """Fixture to create a test admin user in the database for each test."""
+    username = "testfixtureadmin"
+    password = "fixturepassword"
+    hashed = hash_password(password)
+    user = AdminUser(username=username, password_hash=hashed)
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    # Add the raw password for test usage
+    # Note: Attaching attributes directly to ORM instances isn't always clean,
+    # consider returning a tuple or dict if needed elsewhere
+    user.raw_password = password 
+    return user 
