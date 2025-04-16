@@ -10,4 +10,10 @@ pytest
 httpx # Required by pytest-asyncio and for testing FastAPI async client
 bcrypt
 pyjwt
-python-jose[cryptography] # Add this for JWT handling 
+python-jose[cryptography] # Add this for JWT handling
+passlib[bcrypt]
+asyncpg # Async PostgreSQL driver
+greenlet # Required by SQLAlchemy for async context switching
+
+# Testing specific
+pytest-asyncio # For running async tests 
